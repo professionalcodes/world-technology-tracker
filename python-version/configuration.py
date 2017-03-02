@@ -1,3 +1,3 @@
 config = {
-	"test": 
+	"test": "testing123"
 }
