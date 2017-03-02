@@ -13,16 +13,42 @@
 # limitations under the License.
 
 import webapp2
+import os
+import jinja2
+import re
+import random
+import pickle
+import string
+import json
+import logging
+import stripe
+import random
+from configuration import config 
+from google.appengine.ext import ndb
 
-html = """
-	<h1>HEllo I'm Nausica. Check out my artwork</h1>
-	<img src='https://www.google.com/url?sa=i&rct=j&q=&esrc=s&source=images&cd=&cad=rja&uact=8&ved=0ahUKEwitnZfE48rRAhWGRiYKHRQlDYMQjRwIBQ&url=https%3A%2F%2Fvine.co%2Fu%2F941902279374700544&psig=AFQjCNGxNDKASRtn3mc0RD7zaj1xZeKEYw&ust=1484797413053524'>
-"""
-class MainPage(webapp2.RequestHandler):
-    def get(self):
-        self.response.write(html)
+template_dir = os.path.join(os.path.dirname(__file__), 'jinja_templates')
+jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir), autoescape = True)
 
+class MainHandler(webapp2.RequestHandler):
+
+	def write(self, *args, **kwargs):
+		self.response.out.write(*args, **kwargs)
+
+	def render_str(self, template, **params):
+		t = jinja_env.get_template(template)
+		return t.render(params)
+
+	def render(self, template, **kwargs):
+		self.write(self.render_str(template, **kwargs))
+
+
+class Homepage(MainHandler):
+	def get(self):
+		self.render("index.html")		
+
+	def post(self):
+		pass
 
 app = webapp2.WSGIApplication([
-    ('/', MainPage),
+    ('/', Homepage),
 ], debug=True)
